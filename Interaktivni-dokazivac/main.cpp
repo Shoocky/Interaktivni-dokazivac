@@ -1,3 +1,7 @@
+/* Interaktivni dokazivac u prirodnoj dedukciji
+ * sintaksa...
+ * */
+
 #include "mainwindow.h"
 #include <QApplication>
 #include "fol.hpp"
