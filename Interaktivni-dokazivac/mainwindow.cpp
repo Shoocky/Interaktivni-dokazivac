@@ -86,8 +86,9 @@ void MainWindow::buttonClicked()
         int rect_x = 85;
         int rect_y = 180;
         Node* item = new Node(ui->lineEdit->text(), parsed_formula, rect_width, rect_height, rect_x, rect_y);
-        scene->addItem(item);
-        items.push_back(item);
+        scene->addNode(item);
+        //scene->addItem(item);
+        //items.push_back(item);
     }
     else{
 
@@ -98,23 +99,32 @@ void MainWindow::buttonClicked()
         qreal rect_height = 20;
         int rect_x = selected->getx() - 20 - depth/2;
         int rect_y = selected->gety() - 20 - depth/2;
-        Node* item = new Node( selected->getText(), parsed_formula, rect_width, rect_height, rect_x, rect_y);
-        scene->addItem(item);
-        items.push_back(item);
+        Node* item = new Node( selected->getText(), parsed_formula, rect_width, rect_height, rect_x, rect_y, selected);
+        scene->addNode(item);
+        //scene->addItem(item);
+        //items.push_back(item);
 
         rect_x = selected->getx() + 25  + depth/2;
         rect_y = selected->gety() - 20 - depth/2;
-        Node* item1 = new Node( selected->getText(), parsed_formula, rect_width, rect_height, rect_x, rect_y);
-        scene->addItem(item1);
-        items.push_back(item1);
+        Node* item1 = new Node( selected->getText(), parsed_formula, rect_width, rect_height, rect_x, rect_y, selected);
+        scene->addNode(item1);
+        //scene->addItem(item1);
+        //items.push_back(item1);
     }
     depth += 15;
 }
 
 void MainWindow::ponistiClicked()
 {
-    qDebug() << "ponisti";
+    QList<QGraphicsItem*> selected_list = scene->selectedItems();
+    if(selected_list.isEmpty()){
+        return;
+    }
+    //scene->removeItem(selected_list.at(0));
+    scene->removeNode(selected_list.at(0));
+    /*
     scene->removeItem(items[items.size()-1]);
     items.pop_back();
+    */
     scene->update();
 }

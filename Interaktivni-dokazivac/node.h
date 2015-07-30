@@ -8,7 +8,7 @@ class Node : public QGraphicsItem
 {
 
 public:
-    Node(QString text, const Formula & formula, qreal, qreal, int, int);
+    Node(QString text, const Formula & formula, qreal, qreal, int, int, QGraphicsItem* parent_node = nullptr);
 
 
     // QGraphicsItem interface
@@ -18,9 +18,11 @@ public:
     QString getText() const;
     qreal getx() const;
     qreal gety() const;
+    QGraphicsItem* parentNode() const;
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 private:
+    QGraphicsItem * m_parent;
     Formula m_formula;
     QString text;
     qreal rect_width;

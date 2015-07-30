@@ -5,7 +5,7 @@
 #include <ostream>
 #include <string>
 
-Node::Node(const QString str, const Formula & formula, const qreal width, const qreal height,const  int x, const int y)
+Node::Node(const QString str, const Formula & formula, const qreal width, const qreal height, const  int x, const int y, QGraphicsItem *parent_node)
 {
     std::ostringstream stream;
     formula->printFormula(stream);
@@ -17,8 +17,10 @@ Node::Node(const QString str, const Formula & formula, const qreal width, const 
     rect_x = x;
     rect_y = y;
     pressed = false;
+    m_parent = parent_node;
     this->setFlag(QGraphicsItem::ItemIsSelectable);
 }
+
 
 QRectF Node::boundingRect() const
 {
@@ -27,7 +29,8 @@ QRectF Node::boundingRect() const
 
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    if(pressed){
+
+    if(isSelected()){
         QRectF rect = boundingRect();
         QPen pen(Qt::red, 1);
         painter->setPen(pen);
@@ -60,25 +63,22 @@ qreal Node::gety() const
 {
     return rect_y;
 }
+
+QGraphicsItem *Node::parentNode() const
+{
+    return m_parent;
+}
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() == Qt::MouseButton::RightButton) {
-            this->setSelected(true);
+    /*
+    if (event->button() == Qt::MouseButton::LeftButton) {
+            qDebug() << "node: mouse press";
+            bool selected = isSelected();
+            setSelected(!selected);
+            isSelected() ? qDebug() << "selektovan je" : qDebug() << "nije selektovan";
             update();
         }
-    else
-    if(pressed){
-        pressed = false;
-        update();
-        this->setSelected(false);
-        QGraphicsItem::mousePressEvent(event);
-    }
-    else{
-        pressed = true;
-        this->setSelected(true);
-        update();
-        QGraphicsItem::mousePressEvent(event);
-    }
+        */
 }
 
 
