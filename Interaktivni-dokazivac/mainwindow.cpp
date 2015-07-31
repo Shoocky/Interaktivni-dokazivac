@@ -99,14 +99,14 @@ void MainWindow::buttonClicked()
         qreal rect_height = 20;
         int rect_x = selected->getx() - 20 - depth/2;
         int rect_y = selected->gety() - 20 - depth/2;
-        Node* item = new Node( selected->getText(), parsed_formula, rect_width, rect_height, rect_x, rect_y, selected);
+        Node* item = new Node( selected->getText(), parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
         scene->addNode(item);
         //scene->addItem(item);
         //items.push_back(item);
 
         rect_x = selected->getx() + 25  + depth/2;
         rect_y = selected->gety() - 20 - depth/2;
-        Node* item1 = new Node( selected->getText(), parsed_formula, rect_width, rect_height, rect_x, rect_y, selected);
+        Node* item1 = new Node( selected->getText(), parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
         scene->addNode(item1);
         //scene->addItem(item1);
         //items.push_back(item1);
