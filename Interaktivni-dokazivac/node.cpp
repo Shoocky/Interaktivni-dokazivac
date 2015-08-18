@@ -10,6 +10,7 @@ Node::Node(const QString str, const Formula & formula, const qreal width, const 
     std::ostringstream stream;
     formula->printFormula(stream);
 
+    m_formula = formula;
     text = QString::fromStdString(stream.str());
     qDebug() << "Node(): " + text;
     rect_width = width;
@@ -62,6 +63,11 @@ qreal Node::getx() const
 qreal Node::gety() const
 {
     return rect_y;
+}
+
+const Formula& Node::getFormula() const
+{
+    return m_formula;
 }
 
 QGraphicsItem *Node::parentNode() const

@@ -18,6 +18,10 @@ class MainWindow : public QMainWindow
 private slots:
     void buttonClicked();
     void ponistiClicked();
+    void andIClicked();
+    void orI1Clicked();
+    void orI2Clicked();
+    void andE1Clicked();
 
 public:
     explicit MainWindow(QWidget *parent = 0);

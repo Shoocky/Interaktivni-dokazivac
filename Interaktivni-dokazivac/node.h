@@ -18,6 +18,7 @@ public:
     QString getText() const;
     qreal getx() const;
     qreal gety() const;
+    const Formula &getFormula() const;
     QGraphicsItem* parentNode() const;
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

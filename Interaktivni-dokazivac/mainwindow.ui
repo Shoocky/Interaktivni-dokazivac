@@ -62,7 +62,7 @@
      <string>andI</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="andE">
+   <widget class="QPushButton" name="andE1">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -78,13 +78,13 @@
      </size>
     </property>
     <property name="text">
-     <string>andE</string>
+     <string>andE1</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="orI">
+   <widget class="QPushButton" name="andE2">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>150</y>
       <width>75</width>
       <height>23</height>
@@ -97,14 +97,14 @@
      </size>
     </property>
     <property name="text">
-     <string>orI</string>
+     <string>andE2</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="orE">
+   <widget class="QPushButton" name="orI1">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>170</y>
+      <x>10</x>
+      <y>180</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -116,7 +116,7 @@
      </size>
     </property>
     <property name="text">
-     <string>orE</string>
+     <string>orI1</string>
     </property>
    </widget>
    <widget class="QPushButton" name="ponisti">
@@ -132,6 +132,94 @@
      <string>ponisti</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="orI2">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>90</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>orI2</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="orE">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>120</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>orE</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="notI">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>150</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>notI</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="notE">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>180</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>notE</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="impI">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>220</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>impI</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="impE">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>90</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>impE</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="constLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>10</y>
+      <width>113</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -139,7 +227,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
