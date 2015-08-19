@@ -9,6 +9,8 @@
 #include <qdebug.h>
 #include <sstream>
 #include <QMessageBox>
+#include <QInputDialog>
+#include <QDir>b
 
 
 typedef struct yy_buffer_state * YY_BUFFER_STATE;
@@ -43,7 +45,6 @@ MainWindow::MainWindow(QWidget *parent) :
     btn_layout->addWidget(ui->notE);
     btn_layout->addWidget(ui->impI);
     btn_layout->addWidget(ui->impE);
-    btn_layout->addWidget(ui->constLineEdit);
 
     btn_layout->addWidget(ui->ponisti);
     layout->addLayout(btn_layout);
@@ -149,30 +150,22 @@ void MainWindow::andIClicked()
 {
 
         QList<QGraphicsItem *> selected_list = scene->selectedItems();
-        Node* selected = (Node*)(selected_list.at(0));
+        Node* selected = (Node*)(selected_list.at(0));    
 
-        if(selected->getFormula()->getType() != BaseFormula::T_AND){
+        qreal rect_width =  (selected->getText().length()*10 - 5)*2;
+        qreal rect_height = 20;
+        int rect_x = selected->getx() - 20 - depth/2;
+        int rect_y = selected->gety() - 20 - depth/2;
 
-            QMessageBox msgBox;
-            msgBox.setText("Ne moze se primeniti pravilo andI ");
-            msgBox.exec();
-        }
-        else{
-            qreal rect_width =  (selected->getText().length()*10 - 5)*2;
-            qreal rect_height = 20;
-            int rect_x = selected->getx() - 20 - depth/2;
-            int rect_y = selected->gety() - 20 - depth/2;
+        Node* item = new Node( ((And*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+        scene->addNode(item);
 
-            Node* item = new Node( ((And*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
-            scene->addNode(item);
+        rect_x = selected->getx() + 25  + depth/2;
+        rect_y = selected->gety() - 20 - depth/2;
 
-            rect_x = selected->getx() + 25  + depth/2;
-            rect_y = selected->gety() - 20 - depth/2;
+        Node* item1 = new Node( ((And*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+        scene->addNode(item1);
 
-            Node* item1 = new Node( ((And*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
-            scene->addNode(item1);
-
-        }
 
 }
 
@@ -183,23 +176,14 @@ void MainWindow::orI1Clicked()
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
 
-    if(selected->getFormula()->getType() != BaseFormula::T_OR){
+    qreal rect_width =  (selected->getText().length()*10 - 5)*2;
+    qreal rect_height = 20;
+    int rect_x = selected->getx() - 20 - depth/2;
+    int rect_y = selected->gety() - 20 - depth/2;
+    Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item);
 
-        QMessageBox msgBox;
-        msgBox.setText("Ne moze se primeniti pravilo andI ");
-        msgBox.exec();
-    }
 
-    else{
-
-        qreal rect_width =  (selected->getText().length()*10 - 5)*2;
-        qreal rect_height = 20;
-        int rect_x = selected->getx() - 20 - depth/2;
-        int rect_y = selected->gety() - 20 - depth/2;
-        Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
-        scene->addNode(item);
-
-    }
 
 }
 
@@ -209,23 +193,13 @@ void MainWindow::orI2Clicked()
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
 
-    if(selected->getFormula()->getType() != BaseFormula::T_OR){
+    qreal rect_width =  (selected->getText().length()*10 - 5)*2;
+    qreal rect_height = 20;
+    int rect_x = selected->getx() - 20 - depth/2;
+    int rect_y = selected->gety() - 20 - depth/2;
+    Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item);
 
-        QMessageBox msgBox;
-        msgBox.setText("Ne moze se primeniti pravilo andI ");
-        msgBox.exec();
-    }
-
-    else{
-
-        qreal rect_width =  (selected->getText().length()*10 - 5)*2;
-        qreal rect_height = 20;
-        int rect_x = selected->getx() - 20 - depth/2;
-        int rect_y = selected->gety() - 20 - depth/2;
-        Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
-        scene->addNode(item);
-
-    }
 
 }
 
@@ -238,14 +212,22 @@ void MainWindow::andE1Clicked(){
 
     Formula f1 = selected->getFormula();
 
-    std::string formula = ui->constLineEdit->text().toUtf8().constData();
+    bool ok;
+    QString tekst = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                             tr("Unesite formulu:"), QLineEdit::Normal,
+                                             QDir::home().dirName(), &ok);
+    if (ok && !tekst.isEmpty()){
+            qDebug() << "radi";
+    }
+
+
+    std::string formula = tekst.toUtf8().constData();
     formula += " ;";
     std::ostringstream stream;
-    QString tekst;
     qDebug() << QString::fromStdString(formula);
     YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
 
-            if(yyparse() == 1){
+    if(yyparse() == 1){
         qDebug() << "Pa to ti ne radi";
     }
 
@@ -270,11 +252,18 @@ void MainWindow::andE2Clicked(){
     Node* selected = (Node*)(selected_list.at(0));
 
     Formula f1 = selected->getFormula();
+    bool ok;
+    QString tekst = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                             tr("Unesite formulu:"), QLineEdit::Normal,
+                                             "", &ok);
+    if (ok && !tekst.isEmpty()){
+            qDebug() << "radi";
+    }
 
-    std::string formula = ui->constLineEdit->text().toUtf8().constData();
+
+    std::string formula = tekst.toUtf8().constData();
     formula += " ;";
     std::ostringstream stream;
-    QString tekst;
     qDebug() << QString::fromStdString(formula);
     YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
 
@@ -322,11 +311,18 @@ void MainWindow::impEClicked()
     Node* selected = (Node*)(selected_list.at(0));
 
     Formula f1 = selected->getFormula();
+    bool ok;
+    QString tekst = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                             tr("Unesite formulu:"), QLineEdit::Normal,
+                                             "", &ok);
+    if (ok && !tekst.isEmpty()){
+            qDebug() << "radi";
+    }
 
-    std::string formula = ui->constLineEdit->text().toUtf8().constData();
+
+    std::string formula = tekst.toUtf8().constData();
     formula += " ;";
     std::ostringstream stream;
-    QString tekst;
     qDebug() << QString::fromStdString(formula);
     YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
 
@@ -356,11 +352,18 @@ void MainWindow::notEClicked()
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
+    bool ok;
+    QString tekst = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                             tr("Unesite formulu:"), QLineEdit::Normal,
+                                             "", &ok);
+    if (ok && !tekst.isEmpty()){
+            qDebug() << "radi";
+    }
 
-    std::string formula = ui->constLineEdit->text().toUtf8().constData();
+
+    std::string formula = tekst.toUtf8().constData();
     formula += " ;";
     std::ostringstream stream;
-    QString tekst;
     qDebug() << QString::fromStdString(formula);
     YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
 

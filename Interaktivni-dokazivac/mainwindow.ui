@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>405</width>
+    <height>354</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -210,23 +210,13 @@
      <string>impE</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="constLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>10</y>
-      <width>113</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>405</width>
      <height>25</height>
     </rect>
    </property>
