@@ -19,10 +19,11 @@ private slots:
     void buttonClicked();
     void ponistiClicked();
     void andIClicked();
-    void orI1Clicked();
-    void orI2Clicked();
     void andE1Clicked();
     void andE2Clicked();
+    void orI1Clicked();
+    void orI2Clicked();
+    void orEClicked();
     void impIClicked();
     void impEClicked();
     void notEClicked();

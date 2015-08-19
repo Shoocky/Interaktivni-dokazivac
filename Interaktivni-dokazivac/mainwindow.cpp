@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->andI, SIGNAL(clicked()), this, SLOT(andIClicked()));
     connect(ui->orI1, SIGNAL(clicked()), this, SLOT(orI1Clicked()));
     connect(ui->orI2, SIGNAL(clicked()), this, SLOT(orI2Clicked()));
+    connect(ui->orE, SIGNAL(clicked()), this, SLOT(orEClicked()));
     connect(ui->andE1, SIGNAL(clicked()), this, SLOT(andE1Clicked()));
     connect(ui->andE2, SIGNAL(clicked()), this, SLOT(andE2Clicked()));
     connect(ui->impI, SIGNAL(clicked()), this, SLOT(impIClicked()));
@@ -199,6 +200,69 @@ void MainWindow::orI2Clicked()
     int rect_y = selected->gety() - 20 - depth/2;
     Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
     scene->addNode(item);
+
+
+
+}
+
+void MainWindow::orEClicked()
+{
+
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
+
+    qreal rect_width =  (selected->getText().length()*10 - 5)*10;
+    qreal rect_height = 20;
+
+    int rect_x;
+    int rect_y;
+
+    bool ok;
+    while(1){
+             QString tekst = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                             tr("Unesite formulu:"), QLineEdit::Normal,
+                                             QDir::home().dirName(), &ok);
+             if (ok && !tekst.isEmpty()){
+                qDebug() << "radi";
+             }
+
+
+            std::string formula = tekst.toUtf8().constData();
+            formula += " ;";
+            std::ostringstream stream;
+            qDebug() << QString::fromStdString(formula);
+            YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
+
+            if(yyparse() == 1){
+                qDebug() << "Pa to ti ne radi";
+             }
+
+            if(parsed_formula->getType() == BaseFormula::T_OR){
+                break;
+            }
+    }
+    rect_x = selected->getx() - 20 - depth/2;
+    rect_y = selected->gety() - 20 - depth/2;
+
+    Node* item3 = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item3);
+
+    Formula op1 = ((Or*)parsed_formula.get())->getOperand1();
+    Formula op2 = ((Or*)parsed_formula.get())->getOperand2();
+    m_pretpostavke.push_back(op1);
+    m_pretpostavke.push_back(op2);
+
+    rect_x = selected->getx() + 25 + depth/2;
+    rect_y = selected->gety() - 20 - depth/2;
+    Node* item1 = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item1);
+
+
+    rect_x = selected->getx() + 50 + depth/2;
+    rect_y = selected->gety() - 20 - depth/2;
+    Node* item2 = new Node(selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item2);
+
 
 
 }
