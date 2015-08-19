@@ -8,7 +8,7 @@ class Node : public QGraphicsItem
 {
 
 public:
-    Node(QString text, const Formula & formula, qreal, qreal, int, int, QGraphicsItem* parent_node = nullptr);
+    Node(const Formula & formula, qreal, qreal, int, int, QGraphicsItem* parent_node = nullptr);
 
 
     // QGraphicsItem interface

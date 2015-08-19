@@ -56,6 +56,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->orI1, SIGNAL(clicked()), this, SLOT(orI1Clicked()));
     connect(ui->orI2, SIGNAL(clicked()), this, SLOT(orI2Clicked()));
     connect(ui->andE1, SIGNAL(clicked()), this, SLOT(andE1Clicked()));
+    connect(ui->andE2, SIGNAL(clicked()), this, SLOT(andE2Clicked()));
+    connect(ui->impI, SIGNAL(clicked()), this, SLOT(impIClicked()));
+    connect(ui->impE, SIGNAL(clicked()), this, SLOT(impEClicked()));
+    connect(ui->notE, SIGNAL(clicked()), this, SLOT(notEClicked()));
+    connect(ui->notI, SIGNAL(clicked()), this, SLOT(notIClicked()));
+
+
+
+    connect(scene, SIGNAL(selectionChanged()), this, SLOT(selectedItemChanged()));
 
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
@@ -80,11 +89,12 @@ void MainWindow::buttonClicked()
         std::string tmp;
         qDebug() << QString::fromStdString(formula);
        YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
+
                 if(yyparse() == 1){
             qDebug() << "Pa to ti ne radi";
         }
 
-
+/*
         if(parsed_formula.get() != 0){
                ((Or*)parsed_formula.get())->getOperand2()->printFormula(stream);
                 qDebug() << "ovo je nesto: " << QString::fromStdString(stream.str());
@@ -92,15 +102,13 @@ void MainWindow::buttonClicked()
         else {
             qDebug() << " pa dobro";
         }
-
-        qreal rect_width = (ui->lineEdit->text().length()*10 -5)*2;
+*/       qreal rect_width = (ui->lineEdit->text().length()*10 -5)*2;
         qreal rect_height = 20;
         int rect_x = 85;
         int rect_y = 180;
-        Node* item = new Node(ui->lineEdit->text(), parsed_formula, rect_width, rect_height, rect_x, rect_y);
+
+        Node* item = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y);
         scene->addNode(item);
-        //scene->addItem(item);
-        //items.push_back(item);
     }
     else{
 
@@ -111,17 +119,15 @@ void MainWindow::buttonClicked()
         qreal rect_height = 20;
         int rect_x = selected->getx() - 20 - depth/2;
         int rect_y = selected->gety() - 20 - depth/2;
-        Node* item = new Node( selected->getText(), parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+
+        Node* item = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
         scene->addNode(item);
-        //scene->addItem(item);
-        //items.push_back(item);
 
         rect_x = selected->getx() + 25  + depth/2;
         rect_y = selected->gety() - 20 - depth/2;
-        Node* item1 = new Node( selected->getText(), parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+        Node* item1 = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
         scene->addNode(item1);
-        //scene->addItem(item1);
-        //items.push_back(item1);
+
     }
     depth += 15;
 }
@@ -129,35 +135,22 @@ void MainWindow::buttonClicked()
 void MainWindow::ponistiClicked()
 {
     QList<QGraphicsItem*> selected_list = scene->selectedItems();
+
     if(selected_list.isEmpty()){
         return;
     }
-    //scene->removeItem(selected_list.at(0));
+
     scene->removeNode(selected_list.at(0));
-    /*
-    scene->removeItem(items[items.size()-1]);
-    items.pop_back();
-    */
+
     scene->update();
 }
 
 void MainWindow::andIClicked()
 {
 
-        qDebug() << "AndI " ;
         QList<QGraphicsItem *> selected_list = scene->selectedItems();
-
-        /*
-        std::ostringstream stream;
-        ((And*)parsed_formula.get())->getOperand1()->printFormula(stream);
-         QString tekst = QString::fromStdString(stream.str());
-
-*/
         Node* selected = (Node*)(selected_list.at(0));
-        qDebug() << selected->getText();
 
-        std::ostringstream stream;
-        qDebug() << "lalal";
         if(selected->getFormula()->getType() != BaseFormula::T_AND){
 
             QMessageBox msgBox;
@@ -170,17 +163,13 @@ void MainWindow::andIClicked()
             int rect_x = selected->getx() - 20 - depth/2;
             int rect_y = selected->gety() - 20 - depth/2;
 
-            Node* item = new Node( selected->getText(), ((And*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+            Node* item = new Node( ((And*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
             scene->addNode(item);
-            //scene->addItem(item);
-            //items.push_back(item);
-            /*
 
-        ((And*)parsed_formula.get())->getOperand2()->printFormula(stream);
-        tekst = QString::fromStdString(stream.str());*/
             rect_x = selected->getx() + 25  + depth/2;
             rect_y = selected->gety() - 20 - depth/2;
-            Node* item1 = new Node( selected->getText(),  ((And*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+
+            Node* item1 = new Node( ((And*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
             scene->addNode(item1);
 
         }
@@ -189,32 +178,26 @@ void MainWindow::andIClicked()
 
 void MainWindow::orI1Clicked()
 {
-    if(parsed_formula->getType() != BaseFormula::T_OR){
+
+
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
+
+    if(selected->getFormula()->getType() != BaseFormula::T_OR){
 
         QMessageBox msgBox;
-        msgBox.setText("Ne moze se primeniti pravilo orI1 ");
+        msgBox.setText("Ne moze se primeniti pravilo andI ");
         msgBox.exec();
     }
+
     else{
 
-        QList<QGraphicsItem *> selected_list = scene->selectedItems();
-
-        std::ostringstream stream;
-        ((Or*)parsed_formula.get())->getOperand1()->printFormula(stream);
-         QString tekst = QString::fromStdString(stream.str());
-
-
-        Node* selected = (Node*)(selected_list.at(0));
         qreal rect_width =  (selected->getText().length()*10 - 5)*2;
         qreal rect_height = 20;
         int rect_x = selected->getx() - 20 - depth/2;
         int rect_y = selected->gety() - 20 - depth/2;
-        Node* item = new Node( tekst, ((Or*)parsed_formula.get())->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+        Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
         scene->addNode(item);
-        //scene->addItem(item);
-        //items.push_back(item);
-
-
 
     }
 
@@ -223,28 +206,24 @@ void MainWindow::orI1Clicked()
 
 void MainWindow::orI2Clicked()
 {
-    if(parsed_formula->getType() != BaseFormula::T_OR){
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
+
+    if(selected->getFormula()->getType() != BaseFormula::T_OR){
 
         QMessageBox msgBox;
         msgBox.setText("Ne moze se primeniti pravilo andI ");
         msgBox.exec();
     }
+
     else{
 
-        QList<QGraphicsItem *> selected_list = scene->selectedItems();
-
-        std::ostringstream stream;
-
-        ((Or*)parsed_formula.get())->getOperand2()->printFormula(stream);
-        QString tekst = QString::fromStdString(stream.str());
-        Node* selected = (Node*)(selected_list.at(0));
-        qreal rect_width =  selected->getText().length()*10 - 5;
+        qreal rect_width =  (selected->getText().length()*10 - 5)*2;
         qreal rect_height = 20;
-
-        int rect_x = selected->getx() + 25  + depth/2;
+        int rect_x = selected->getx() - 20 - depth/2;
         int rect_y = selected->gety() - 20 - depth/2;
-        Node* item1 = new Node( tekst, ((Or*)parsed_formula.get())->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
-        scene->addNode(item1);
+        Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+        scene->addNode(item);
 
     }
 
@@ -257,56 +236,241 @@ void MainWindow::andE1Clicked(){
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
 
-    QString tekst = selected->getText();
-    qDebug() << "lalalalalla";
-    std::string formula = tekst.toUtf8().constData();
-    formula += ";";
+    Formula f1 = selected->getFormula();
+
+    std::string formula = ui->constLineEdit->text().toUtf8().constData();
+    formula += " ;";
     std::ostringstream stream;
-    std::string tmp;
+    QString tekst;
     qDebug() << QString::fromStdString(formula);
-   YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
+    YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
+
             if(yyparse() == 1){
         qDebug() << "Pa to ti ne radi";
-    }
-
-
-    if(parsed_formula.get() != 0){
-           ((Or*)parsed_formula.get())->getOperand2()->printFormula(stream);
-            qDebug() << "ovo je nesto: " << QString::fromStdString(stream.str());
-    }
-    else {
-        qDebug() << " pa dobro";
-    }
-     Formula f1 = parsed_formula;
-
-
-    qDebug() << "lalalalalla";
-   formula = ui->constLineEdit->text().toUtf8().constData();
-    formula += ";";
-    qDebug() << QString::fromStdString(formula);
-    buffer = yy_scan_string(formula.c_str());
-            if(yyparse() == 1){
-        qDebug() << "Pa to ti ne radi";
-    }
-
-
-    if(parsed_formula.get() != 0){
-           qDebug() << "ne znam sta";
-    }
-    else {
-        qDebug() << " pa dobro";
     }
 
     Formula new_formula = Formula(new And(f1, parsed_formula));
 
     new_formula->printFormula(stream);
-   tekst = QString::fromStdString(stream.str());
-    selected = (Node*)(selected_list.at(0));
+    tekst = QString::fromStdString(stream.str());
+    qreal rect_width =  (tekst.length()*10 - 5)*3;
+    qreal rect_height = 20;
+
+    int rect_x = selected->getx() + 25  + depth/2;
+    int rect_y = selected->gety() - 20 - depth/2;
+    Node* item1 = new Node( new_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item1);
+}
+
+void MainWindow::andE2Clicked(){
+
+
+
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
+
+    Formula f1 = selected->getFormula();
+
+    std::string formula = ui->constLineEdit->text().toUtf8().constData();
+    formula += " ;";
+    std::ostringstream stream;
+    QString tekst;
+    qDebug() << QString::fromStdString(formula);
+    YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
+
+            if(yyparse() == 1){
+        qDebug() << "Pa to ti ne radi";
+    }
+
+    Formula new_formula = Formula(new And(parsed_formula, f1));
+
+    new_formula->printFormula(stream);
+    tekst = QString::fromStdString(stream.str());
+    qreal rect_width =  (tekst.length()*10 - 5)*3;
+    qreal rect_height = 20;
+
+    int rect_x = selected->getx() + 25  + depth/2;
+    int rect_y = selected->gety() - 20 - depth/2;
+    Node* item1 = new Node( new_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item1);
+}
+
+void MainWindow::impIClicked()
+{
+
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
+    Formula f = selected->getFormula();
+    Formula op1 = ((Imp*)f.get())->getOperand1();
+    Formula op2 = ((Imp*)f.get())->getOperand2();
+
+    m_pretpostavke.push_back(op1);
     qreal rect_width =  (selected->getText().length()*10 - 5)*3;
     qreal rect_height = 20;
 
     int rect_x = selected->getx() + 25  + depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
-    Node* item1 = new Node( tekst, new_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    Node* item = new Node( op2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item);
+
+}
+
+void MainWindow::impEClicked()
+{
+
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
+
+    Formula f1 = selected->getFormula();
+
+    std::string formula = ui->constLineEdit->text().toUtf8().constData();
+    formula += " ;";
+    std::ostringstream stream;
+    QString tekst;
+    qDebug() << QString::fromStdString(formula);
+    YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
+
+            if(yyparse() == 1){
+        qDebug() << "Pa to ti ne radi";
+    }
+
+    qreal rect_width =  (selected->getText().length()*10 - 5)*3;
+    qreal rect_height = 20;
+
+    int rect_x = selected->getx() -20  - depth/2;
+    int rect_y = selected->gety() - 20 - depth/2;
+    Node* item1 = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
     scene->addNode(item1);
+
+    Formula f2 = Formula(new Imp(parsed_formula, f1));
+
+    rect_x = selected->getx() + 25  + depth/2;
+    rect_y = selected->gety() - 20 - depth/2;
+    Node* item2 = new Node( f2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item2);
+
+}
+
+void MainWindow::notEClicked()
+{
+
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
+
+    std::string formula = ui->constLineEdit->text().toUtf8().constData();
+    formula += " ;";
+    std::ostringstream stream;
+    QString tekst;
+    qDebug() << QString::fromStdString(formula);
+    YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
+
+            if(yyparse() == 1){
+        qDebug() << "Pa to ti ne radi";
+    }
+    qreal rect_width =  (selected->getText().length()*10 - 5)*3;
+    qreal rect_height = 20;
+
+    int rect_x = selected->getx() -20  - depth/2;
+    int rect_y = selected->gety() - 20 - depth/2;
+    Node* item1 = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item1);
+
+    Formula f2 = Formula(new Not(parsed_formula));
+
+    rect_x = selected->getx() + 25  + depth/2;
+    rect_y = selected->gety() - 20 - depth/2;
+    Node* item2 = new Node( f2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item2);
+
+}
+
+void MainWindow::notIClicked()
+{
+
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
+    m_pretpostavke.push_back(((Not*)selected->getFormula().get())->getOperand());
+
+    Formula false_f = Formula(new False());
+
+    qreal rect_width =  (selected->getText().length()*10 - 5)*3;
+    qreal rect_height = 20;
+
+    int rect_x = selected->getx() -20  - depth/2;
+    int rect_y = selected->gety() - 20 - depth/2;
+
+    Node* item = new Node( false_f, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item);
+}
+
+
+
+void MainWindow::selectedItemChanged()
+{
+
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
+    if(selected->getFormula()->getType() == BaseFormula::T_AND){
+        ui->orI1->setDisabled(true);
+        ui->orI2->setDisabled(true);
+        ui->impI->setDisabled(true);
+        ui->impE->setDisabled(false);
+        ui->orE->setDisabled(false);
+        ui->notI->setDisabled(true);
+        ui->notE->setDisabled(true);
+        ui->andE1->setDisabled(false);
+        ui->andE2->setDisabled(false);
+        ui->andI->setDisabled(false);
+
+    }
+    else if(selected->getFormula()->getType() == BaseFormula::T_OR){
+        ui->andE1->setDisabled(false);
+        ui->andE2->setDisabled(false);
+        ui->impI->setDisabled(true);
+        ui->impE->setDisabled(false);
+        ui->andI->setDisabled(true);
+        ui->notI->setDisabled(true);
+        ui->notE->setDisabled(false);
+        ui->orE->setDisabled(false);
+        ui->orI1->setDisabled(false);
+        ui->orI2->setDisabled(false);
+    }
+    else if(selected->getFormula()->getType() == BaseFormula::T_IMP){
+        ui->andE1->setDisabled(false);
+        ui->andE2->setDisabled(false);
+        ui->orI1->setDisabled(true);
+        ui->orI2->setDisabled(true);
+        ui->andI->setDisabled(true);
+        ui->orE->setDisabled(false);
+        ui->notI->setDisabled(true);
+        ui->notE->setDisabled(true);
+        ui->impE->setDisabled(false);
+        ui->impI->setDisabled(false);
+    }
+    else if(selected->getFormula()->getType() == BaseFormula::T_NOT){
+
+        ui->andE1->setDisabled(true);
+        ui->andE2->setDisabled(true);
+        ui->orI1->setDisabled(true);
+        ui->orI2->setDisabled(true);
+        ui->andI->setDisabled(true);
+        ui->orE->setDisabled(true);
+        ui->impE->setDisabled(true);
+        ui->impI->setDisabled(true);
+        ui->notE->setDisabled(true);
+        ui->notI->setDisabled(false);
+    }
+    else if(selected->getFormula()->getType() == BaseFormula::T_FALSE){
+
+        ui->andE1->setDisabled(true);
+        ui->andE2->setDisabled(true);
+        ui->orI1->setDisabled(true);
+        ui->orI2->setDisabled(true);
+        ui->andI->setDisabled(true);
+        ui->orE->setDisabled(true);
+        ui->impE->setDisabled(true);
+        ui->impI->setDisabled(true);
+        ui->notI->setDisabled(true);
+        ui->notE->setDisabled(false);
+    }
 }

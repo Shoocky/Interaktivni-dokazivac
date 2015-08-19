@@ -5,7 +5,7 @@
 #include <ostream>
 #include <string>
 
-Node::Node(const QString str, const Formula & formula, const qreal width, const qreal height, const  int x, const int y, QGraphicsItem *parent_node)
+Node::Node(const Formula & formula, qreal width, qreal height, const  int x, const int y, QGraphicsItem *parent_node)
 {
     std::ostringstream stream;
     formula->printFormula(stream);

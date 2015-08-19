@@ -22,6 +22,12 @@ private slots:
     void orI1Clicked();
     void orI2Clicked();
     void andE1Clicked();
+    void andE2Clicked();
+    void impIClicked();
+    void impEClicked();
+    void notEClicked();
+    void notIClicked();
+    void selectedItemChanged();
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -33,6 +39,7 @@ private:
     TreeScene *scene;
     int depth;
     std::vector<QGraphicsItem *> items;
+    std::vector<Formula> m_pretpostavke;
 };
 
 #endif // MAINWINDOW_H

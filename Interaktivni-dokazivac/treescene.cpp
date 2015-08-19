@@ -6,6 +6,7 @@ TreeScene::TreeScene(QObject* parent)
 {
 }
 
+
 void TreeScene::addNode(Node *node)
 {
     m_nodes.push_back(node);
