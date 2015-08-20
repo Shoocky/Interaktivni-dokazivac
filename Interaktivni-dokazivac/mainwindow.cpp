@@ -487,9 +487,6 @@ void MainWindow::trueIClicked()
     int rect_x = selected->getx() -20  - depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
 
-
-    Node* item = new Node( new Formula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
-    scene->addNode(item);
 }
 
 
