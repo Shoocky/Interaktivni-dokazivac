@@ -15,6 +15,7 @@ void TreeScene::addNode(Node *node)
 
 void TreeScene::removeNode(QGraphicsItem *node)
 {
+    qDebug() << "******** 111111111111111 *******";
     static int brojac = 0;
     qDebug() << "Node:  ";
     qDebug() << node;
@@ -36,6 +37,7 @@ QGraphicsItem* tmp;
 }
     qDebug() << "*******USOOO";
 
+    qDebug() << "******** 222222222222 *******";
     for(int i = 0; i<m_nodes.size(); i++){
         if(((Node*)m_nodes[i])->parentNode() == node){
             qDebug() << "POZIVAM ZA: " << m_nodes[i];
@@ -46,7 +48,9 @@ QGraphicsItem* tmp;
         }
     }
 
+    qDebug() << "******* 333333333333333 *******";
     m_nodes.remove(m_nodes.indexOf(node));
+    qDebug() << "******** 4444444444444444 *******";
     removeItem(node);
 
 

@@ -45,7 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
     btn_layout->addWidget(ui->notE);
     btn_layout->addWidget(ui->impI);
     btn_layout->addWidget(ui->impE);
-
+    btn_layout->addWidget(ui->falseE);
+    btn_layout->addWidget(ui->trueI);
     btn_layout->addWidget(ui->ponisti);
     layout->addLayout(btn_layout);
     view = new QGraphicsView(scene);
@@ -63,8 +64,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->impE, SIGNAL(clicked()), this, SLOT(impEClicked()));
     connect(ui->notE, SIGNAL(clicked()), this, SLOT(notEClicked()));
     connect(ui->notI, SIGNAL(clicked()), this, SLOT(notIClicked()));
-
-
+    connect(ui->falseE, SIGNAL(clicked()), this, SLOT(falseEClicked()));
+    connect(ui->trueI, SIGNAL(clicked()), this, SLOT(trueIClicked()));
 
     connect(scene, SIGNAL(selectionChanged()), this, SLOT(selectedItemChanged()));
 
@@ -122,12 +123,12 @@ void MainWindow::buttonClicked()
         int rect_x = selected->getx() - 20 - depth/2;
         int rect_y = selected->gety() - 20 - depth/2;
 
-        Node* item = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+        Node* item = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected);
         scene->addNode(item);
 
         rect_x = selected->getx() + 25  + depth/2;
         rect_y = selected->gety() - 20 - depth/2;
-        Node* item1 = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+        Node* item1 = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected);
         scene->addNode(item1);
 
     }
@@ -470,6 +471,27 @@ void MainWindow::notIClicked()
     scene->addNode(item);
 }
 
+void MainWindow::falseEClicked()
+{
+
+}
+
+void MainWindow::trueIClicked()
+{
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
+
+    qreal rect_width =  (selected->getText().length()*10 - 5)*3;
+    qreal rect_height = 20;
+
+    int rect_x = selected->getx() -20  - depth/2;
+    int rect_y = selected->gety() - 20 - depth/2;
+
+
+    Node* item = new Node( new Formula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    scene->addNode(item);
+}
+
 
 
 void MainWindow::selectedItemChanged()
@@ -539,5 +561,32 @@ void MainWindow::selectedItemChanged()
         ui->impI->setDisabled(true);
         ui->notI->setDisabled(true);
         ui->notE->setDisabled(false);
+    }
+    else if(selected->getFormula()->getType() == BaseFormula::T_ATOM){
+
+        ui->andE1->setDisabled(false);
+        ui->andE2->setDisabled(false);
+        ui->orI1->setDisabled(true);
+        ui->orI2->setDisabled(true);
+        ui->andI->setDisabled(true);
+        ui->orE->setDisabled(false);
+        ui->impE->setDisabled(false);
+        ui->impI->setDisabled(true);
+        ui->notI->setDisabled(true);
+        ui->notE->setDisabled(true);
+    }
+    else if(selected->getFormula()->getType() == BaseFormula::T_TRUE){
+
+        ui->andE1->setDisabled(true);
+        ui->andE2->setDisabled(true);
+        ui->orI1->setDisabled(true);
+        ui->orI2->setDisabled(true);
+        ui->andI->setDisabled(true);
+        ui->orE->setDisabled(true);
+        ui->impE->setDisabled(true);
+        ui->impI->setDisabled(true);
+        ui->notI->setDisabled(true);
+        ui->notE->setDisabled(true);
+        ui->trueI->setDisabled(false);
     }
 }

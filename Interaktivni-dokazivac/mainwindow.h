@@ -28,6 +28,8 @@ private slots:
     void impEClicked();
     void notEClicked();
     void notIClicked();
+    void falseEClicked();
+    void trueIClicked();
     void selectedItemChanged();
 
 public:
