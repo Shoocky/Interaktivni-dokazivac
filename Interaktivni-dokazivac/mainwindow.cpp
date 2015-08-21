@@ -10,7 +10,7 @@
 #include <sstream>
 #include <QMessageBox>
 #include <QInputDialog>
-#include <QDir>b
+#include <QDir>
 
 
 typedef struct yy_buffer_state * YY_BUFFER_STATE;
@@ -495,6 +495,9 @@ void MainWindow::selectedItemChanged()
 {
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    if(selected_list.empty()){
+        return;
+    }
     Node* selected = (Node*)(selected_list.at(0));
     if(selected->getFormula()->getType() == BaseFormula::T_AND){
         ui->orI1->setDisabled(true);

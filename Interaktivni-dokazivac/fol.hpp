@@ -24,6 +24,7 @@ public:
   enum Type { TT_VARIABLE, TT_FUNCTION };
   virtual Type getType() const = 0;
   virtual void printTerm(ostream & ostr) const = 0;
+  virtual bool equalTo(const Term & t) const = 0;
   virtual ~BaseTerm() {}
 };
 
@@ -47,6 +48,10 @@ public:
   virtual void printTerm(ostream & ostr) const
   {
     ostr << _v;
+  }
+   virtual bool equalTo(const Term & t) const{
+      return t->getType() == TT_VARIABLE &&
+             ((VariableTerm *) t.get())->getVariable() == _v;
   }
 };
 
@@ -92,6 +97,25 @@ public:
       ostr << ")";
       }
   }
+  bool equalTo(const Term & t) const
+  {
+    if(t->getType() != TT_FUNCTION)
+      return false;
+
+    if(_f != ((FunctionTerm *) t.get())->getSymbol())
+      return false;
+
+    const vector<Term> & t_ops = ((FunctionTerm *) t.get())->getOperands();
+
+    if(_ops.size() != t_ops.size())
+      return false;
+
+    for(unsigned i = 0; i < _ops.size(); i++)
+      if(!_ops[i]->equalTo(t_ops[i]))
+        return false;
+
+    return true;
+  }
 };
 
 class BaseFormula;
@@ -106,6 +130,7 @@ public:
 
   virtual void printFormula(ostream & ostr) const = 0;
   virtual Type getType() const = 0;
+  virtual bool equalTo(const Formula & f) const = 0;
   virtual ~BaseFormula() {}
 };
 
@@ -119,6 +144,10 @@ public:
 class LogicConstant : public AtomicFormula {
 
 public:
+    bool equalTo( const Formula & f) const
+    {
+      return f->getType() == this->getType();
+    }
 };
 
 
@@ -194,7 +223,25 @@ public:
   {
     return T_ATOM;
   }
+  bool equalTo(const Formula & f) const
+  {
+    if(f->getType() != T_ATOM)
+      return false;
 
+    if(_p != ((Atom *) f.get())->getSymbol())
+      return false;
+
+    const vector<Term> & f_ops = ((Atom *) f.get())->getOperands();
+
+    if(_ops.size() != f_ops.size())
+      return false;
+
+    for(unsigned i = 0; i < _ops.size(); i++)
+      if(!_ops[i]->equalTo(f_ops[i]))
+        return false;
+
+      return true;
+  }
 };
 
 class Equality : public Atom {
@@ -293,6 +340,11 @@ public:
   {
     return T_NOT;
   }
+  bool equalTo(const Formula & f) const
+  {
+    return f->getType() == this->getType() &&
+      _op->equalTo(((UnaryConjective *)f.get())->getOperand());
+  }
 };
 
 
@@ -313,6 +365,13 @@ public:
   const Formula & getOperand2() const
   {
     return _op2;
+  }
+  bool equalTo( const Formula & f) const
+  {
+    return f->getType() == this->getType() &&
+      _op1->equalTo(((BinaryConjective *)f.get())->getOperand1())
+      &&
+      _op2->equalTo(((BinaryConjective *)f.get())->getOperand2());
   }
 };
 
@@ -491,7 +550,12 @@ public:
   {
     return _op;
   }
-
+  bool equalTo(const Formula & f) const
+  {
+    return f->getType() == getType() &&
+      ((Quantifier *) f.get())->getVariable() == _v &&
+      ((Quantifier *) f.get())->getOperand()->equalTo(_op);
+  }
 };
 
 class Forall : public Quantifier {
