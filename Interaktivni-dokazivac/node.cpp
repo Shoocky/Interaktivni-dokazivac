@@ -9,7 +9,7 @@ Node::Node(const Formula & formula, qreal width, qreal height, const  int x, con
 {
     std::ostringstream stream;
     formula->printFormula(stream);
-
+    m_assumptions = QVector<Formula>();
     m_formula = formula;
     text = QString::fromStdString(stream.str());
     qDebug() << "Node(): " + text;
@@ -20,6 +20,18 @@ Node::Node(const Formula & formula, qreal width, qreal height, const  int x, con
     pressed = false;
     m_parent = parent_node;
     this->setFlag(QGraphicsItem::ItemIsSelectable);
+}
+
+Node::Node(const Formula &formula, qreal width, qreal height, int x, int y, QGraphicsItem *parent_node, QVector<Formula> assumptions)
+    :Node(formula, width, height, x, y, parent_node)
+{
+    std::ostringstream stream;
+    m_formula->printFormula(stream);
+    qDebug() << "Node added: " << QString::fromStdString(stream.str());
+    m_assumptions = assumptions;
+    if(checkAssumption()){
+        text = "Done";
+    }
 }
 
 
@@ -73,6 +85,16 @@ const Formula& Node::getFormula() const
 QGraphicsItem *Node::parentNode() const
 {
     return m_parent;
+}
+
+bool Node::checkAssumption() const
+{
+    for(auto it = m_assumptions.begin(); it != m_assumptions.end(); it++){
+        if(m_formula->equalTo(*it)){
+            return true;
+        }
+    }
+    return false;
 }
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {

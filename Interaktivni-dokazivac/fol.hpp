@@ -25,6 +25,7 @@ public:
   virtual Type getType() const = 0;
   virtual void printTerm(ostream & ostr) const = 0;
   virtual bool equalTo(const Term & t) const = 0;
+
   virtual ~BaseTerm() {}
 };
 
@@ -131,6 +132,7 @@ public:
   virtual void printFormula(ostream & ostr) const = 0;
   virtual Type getType() const = 0;
   virtual bool equalTo(const Formula & f) const = 0;
+  virtual void getAtoms(std::vector<Formula> atoms) = 0;
   virtual ~BaseFormula() {}
 };
 
@@ -147,6 +149,9 @@ public:
     bool equalTo( const Formula & f) const
     {
       return f->getType() == this->getType();
+    }
+    void getAtoms(std::vector<Formula> atoms){
+        atoms.push_back(shared_from_this());
     }
 };
 
@@ -241,6 +246,9 @@ public:
         return false;
 
       return true;
+  }
+  void getAtoms(std::vector<Formula> atoms){
+      atoms.push_back(shared_from_this());
   }
 };
 
@@ -345,6 +353,9 @@ public:
     return f->getType() == this->getType() &&
       _op->equalTo(((UnaryConjective *)f.get())->getOperand());
   }
+  void getAtoms(std::vector<Formula> atoms){
+     _op->getAtoms(atoms);
+  }
 };
 
 
@@ -372,6 +383,10 @@ public:
       _op1->equalTo(((BinaryConjective *)f.get())->getOperand1())
       &&
       _op2->equalTo(((BinaryConjective *)f.get())->getOperand2());
+  }
+  void getAtoms(std::vector<Formula> atoms){
+     _op1->getAtoms(atoms);
+     _op2->getAtoms(atoms);
   }
 };
 
@@ -555,6 +570,9 @@ public:
     return f->getType() == getType() &&
       ((Quantifier *) f.get())->getVariable() == _v &&
       ((Quantifier *) f.get())->getOperand()->equalTo(_op);
+  }
+  void getAtoms(std::vector<Formula> atoms){
+     _op->getAtoms(atoms);
   }
 };
 

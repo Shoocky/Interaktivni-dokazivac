@@ -109,8 +109,10 @@ void MainWindow::buttonClicked()
         qreal rect_height = 20;
         int rect_x = 85;
         int rect_y = 180;
-
-        Node* item = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y);
+        std::vector<Formula> tmp_vec = std::vector<Formula>();
+        parsed_formula->getAtoms(tmp_vec);
+        QVector<Formula> assumptions = QVector<Formula>::fromStdVector(tmp_vec);
+        Node* item = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, nullptr, assumptions);
         scene->addNode(item);
     }
     else{
@@ -159,13 +161,16 @@ void MainWindow::andIClicked()
         int rect_x = selected->getx() - 20 - depth/2;
         int rect_y = selected->gety() - 20 - depth/2;
 
-        Node* item = new Node( ((And*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+        QVector<Formula> assumptions = selected->getAssumptions();
+
+
+        Node* item = new Node( ((And*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
         scene->addNode(item);
 
         rect_x = selected->getx() + 25  + depth/2;
         rect_y = selected->gety() - 20 - depth/2;
 
-        Node* item1 = new Node( ((And*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+        Node* item1 = new Node( ((And*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
         scene->addNode(item1);
 
 
@@ -182,7 +187,9 @@ void MainWindow::orI1Clicked()
     qreal rect_height = 20;
     int rect_x = selected->getx() - 20 - depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
-    Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    QVector<Formula> assumptions = selected->getAssumptions();
+
+    Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item);
 
 
@@ -199,7 +206,8 @@ void MainWindow::orI2Clicked()
     qreal rect_height = 20;
     int rect_x = selected->getx() - 20 - depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
-    Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    QVector<Formula> assumptions = selected->getAssumptions();
+    Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item);
 
 
@@ -255,13 +263,18 @@ void MainWindow::orEClicked()
 
     rect_x = selected->getx() + 25 + depth/2;
     rect_y = selected->gety() - 20 - depth/2;
-    Node* item1 = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+
+    QVector<Formula> assumptions = selected->getAssumptions();
+    assumptions.push_back(op1);
+    assumptions.push_back(op2);
+
+    Node* item1 = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item1);
 
 
     rect_x = selected->getx() + 50 + depth/2;
     rect_y = selected->gety() - 20 - depth/2;
-    Node* item2 = new Node(selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    Node* item2 = new Node(selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item2);
 
 
@@ -305,7 +318,9 @@ void MainWindow::andE1Clicked(){
 
     int rect_x = selected->getx() + 25  + depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
-    Node* item1 = new Node( new_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    QVector<Formula> assumptions = selected->getAssumptions();
+
+    Node* item1 = new Node( new_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item1);
 }
 
@@ -345,7 +360,9 @@ void MainWindow::andE2Clicked(){
 
     int rect_x = selected->getx() + 25  + depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
-    Node* item1 = new Node( new_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    QVector<Formula> assumptions = selected->getAssumptions();
+
+    Node* item1 = new Node( new_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item1);
 }
 
@@ -364,7 +381,10 @@ void MainWindow::impIClicked()
 
     int rect_x = selected->getx() + 25  + depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
-    Node* item = new Node( op2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+
+    QVector<Formula> assumptions = selected->getAssumptions();
+    assumptions.push_back(op1);
+    Node* item = new Node( op2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item);
 
 }
@@ -400,14 +420,16 @@ void MainWindow::impEClicked()
 
     int rect_x = selected->getx() -20  - depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
-    Node* item1 = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+
+    QVector<Formula> assumptions = selected->getAssumptions();
+    Node* item1 = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item1);
 
     Formula f2 = Formula(new Imp(parsed_formula, f1));
 
     rect_x = selected->getx() + 25  + depth/2;
     rect_y = selected->gety() - 20 - depth/2;
-    Node* item2 = new Node( f2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    Node* item2 = new Node( f2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item2);
 
 }
@@ -440,14 +462,15 @@ void MainWindow::notEClicked()
 
     int rect_x = selected->getx() -20  - depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
-    Node* item1 = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    QVector<Formula> assumptions = selected->getAssumptions();
+    Node* item1 = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item1);
 
     Formula f2 = Formula(new Not(parsed_formula));
 
     rect_x = selected->getx() + 25  + depth/2;
     rect_y = selected->gety() - 20 - depth/2;
-    Node* item2 = new Node( f2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    Node* item2 = new Node( f2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item2);
 
 }
@@ -466,8 +489,9 @@ void MainWindow::notIClicked()
 
     int rect_x = selected->getx() -20  - depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
-
-    Node* item = new Node( false_f, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    QVector<Formula> assumptions = selected->getAssumptions();
+    assumptions.push_back(((Not*)selected->getFormula().get())->getOperand());
+    Node* item = new Node( false_f, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item);
 }
 
