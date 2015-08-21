@@ -30,6 +30,7 @@ Node::Node(const Formula &formula, qreal width, qreal height, int x, int y, QGra
     qDebug() << "Node added: " << QString::fromStdString(stream.str());
     m_assumptions = assumptions;
     if(checkAssumption()){
+        rect_width = 35;
         text = "Done";
     }
 }
@@ -47,15 +48,19 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         QRectF rect = boundingRect();
         QPen pen(Qt::red, 1);
         painter->setPen(pen);
-        painter->drawRect(rect);
-        painter->drawText(rect, text);
+        if(text != "Done")
+            painter->drawLine(rect.topLeft(),rect.topRight());
+        //painter->drawRect(rect);
+        painter->drawText(rect, Qt::AlignCenter, text);
     }
     else{
         QRectF rect = boundingRect();
         QPen pen(Qt::black, 1);
         painter->setPen(pen);
-        painter->drawRect(rect);
-        painter->drawText(rect, text);
+        if(text != "Done")
+            painter->drawLine(rect.topLeft(),rect.topRight());
+        //painter->drawRect(rect);
+        painter->drawText(rect, Qt::AlignCenter, text);
     }
     if(isSelected()){
 

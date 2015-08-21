@@ -6,12 +6,14 @@
 #include <QLabel>
 #include <QGraphicsTextItem>
 #include <QGraphicsRectItem>
+#include <QSpacerItem>
 #include <qdebug.h>
 #include <sstream>
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QDir>
 
+#define PARAMETER 11
 
 typedef struct yy_buffer_state * YY_BUFFER_STATE;
 extern int yyparse();
@@ -31,10 +33,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     QHBoxLayout * layout = new QHBoxLayout;
-    QVBoxLayout * btn_layout = new QVBoxLayout;
+
+    QHBoxLayout * input_layout = new QHBoxLayout;
+    input_layout->addWidget(ui->lineEdit);
     ui->dodajDete->setFixedSize(50,30);
-    btn_layout->addWidget(ui->lineEdit);
-    btn_layout->addWidget(ui->dodajDete);
+    input_layout->addWidget(ui->dodajDete);
+
+    QVBoxLayout * btn_layout = new QVBoxLayout;
+    //btn_layout->addWidget(ui->lineEdit);
+    //btn_layout->addWidget(ui->dodajDete);
     btn_layout->addWidget(ui->andI);
     btn_layout->addWidget(ui->andE1);
     btn_layout->addWidget(ui->andE2);
@@ -51,6 +58,10 @@ MainWindow::MainWindow(QWidget *parent) :
     layout->addLayout(btn_layout);
     view = new QGraphicsView(scene);
     layout->addWidget(view);
+
+    QVBoxLayout *main_layout = new QVBoxLayout;
+    main_layout->addLayout(input_layout);
+    main_layout->addLayout(layout);
 
     connect(ui->dodajDete, SIGNAL(clicked()), this, SLOT(buttonClicked()));
     connect(ui->ponisti, SIGNAL(clicked()), this, SLOT(ponistiClicked()));
@@ -70,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(scene, SIGNAL(selectionChanged()), this, SLOT(selectedItemChanged()));
 
     QWidget *widget = new QWidget;
-    widget->setLayout(layout);
+    widget->setLayout(main_layout);
 
     setCentralWidget(widget);
     setWindowTitle("nase drvce");
@@ -105,7 +116,7 @@ void MainWindow::buttonClicked()
         else {
             qDebug() << " pa dobro";
         }
-*/       qreal rect_width = (ui->lineEdit->text().length()*10 -5)*2;
+*/       qreal rect_width = formula.length()*PARAMETER;
         qreal rect_height = 20;
         int rect_x = 85;
         int rect_y = 180;
@@ -120,7 +131,7 @@ void MainWindow::buttonClicked()
         QList<QGraphicsItem *> selected_list = scene->selectedItems();
 
         Node* selected = (Node*)(selected_list.at(0));
-        qreal rect_width =  (selected->getText().length()*10 - 5)*2;
+        qreal rect_width =  selected->getText().length()*PARAMETER;
         qreal rect_height = 20;
         int rect_x = selected->getx() - 20 - depth/2;
         int rect_y = selected->gety() - 20 - depth/2;
@@ -156,7 +167,9 @@ void MainWindow::andIClicked()
         QList<QGraphicsItem *> selected_list = scene->selectedItems();
         Node* selected = (Node*)(selected_list.at(0));    
 
-        qreal rect_width =  (selected->getText().length()*10 - 5)*2;
+        std::ostringstream stream;
+        ((And*)(selected->getFormula().get()))->getOperand1()->printFormula(stream);
+        qreal rect_width =  stream.str().length()*PARAMETER;
         qreal rect_height = 20;
         int rect_x = selected->getx() - 20 - depth/2;
         int rect_y = selected->gety() - 20 - depth/2;
@@ -167,6 +180,9 @@ void MainWindow::andIClicked()
         Node* item = new Node( ((And*)(selected->getFormula().get()))->getOperand1(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
         scene->addNode(item);
 
+        std::ostringstream stream1;
+         ((And*)(selected->getFormula().get()))->getOperand2()->printFormula(stream1);
+        rect_width =  stream1.str().length()*PARAMETER;
         rect_x = selected->getx() + 25  + depth/2;
         rect_y = selected->gety() - 20 - depth/2;
 
@@ -183,7 +199,9 @@ void MainWindow::orI1Clicked()
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
 
-    qreal rect_width =  (selected->getText().length()*10 - 5)*2;
+    std::ostringstream stream;
+    ((Or*)(selected->getFormula().get()))->getOperand1()->printFormula(stream);
+    qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
     int rect_x = selected->getx() - 20 - depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
@@ -202,7 +220,9 @@ void MainWindow::orI2Clicked()
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
 
-    qreal rect_width =  (selected->getText().length()*10 - 5)*2;
+    std::ostringstream stream;
+    ((Or*)(selected->getFormula().get()))->getOperand2()->printFormula(stream);
+    qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
     int rect_x = selected->getx() - 20 - depth/2;
     int rect_y = selected->gety() - 20 - depth/2;
@@ -220,8 +240,7 @@ void MainWindow::orEClicked()
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
 
-    qreal rect_width =  (selected->getText().length()*10 - 5)*10;
-    qreal rect_height = 20;
+
 
     int rect_x;
     int rect_y;
@@ -250,6 +269,12 @@ void MainWindow::orEClicked()
                 break;
             }
     }
+
+    std::ostringstream stream;
+    parsed_formula->printFormula(stream);
+    qreal rect_width =  stream.str().length()*PARAMETER;
+    qreal rect_height = 20;
+
     rect_x = selected->getx() - 20 - depth/2;
     rect_y = selected->gety() - 20 - depth/2;
 
@@ -313,7 +338,7 @@ void MainWindow::andE1Clicked(){
 
     new_formula->printFormula(stream);
     tekst = QString::fromStdString(stream.str());
-    qreal rect_width =  (tekst.length()*10 - 5)*3;
+    qreal rect_width =  tekst.length()*PARAMETER;
     qreal rect_height = 20;
 
     int rect_x = selected->getx() + 25  + depth/2;
@@ -355,7 +380,7 @@ void MainWindow::andE2Clicked(){
 
     new_formula->printFormula(stream);
     tekst = QString::fromStdString(stream.str());
-    qreal rect_width =  (tekst.length()*10 - 5)*3;
+    qreal rect_width =  tekst.length()*PARAMETER;
     qreal rect_height = 20;
 
     int rect_x = selected->getx() + 25  + depth/2;
@@ -376,7 +401,9 @@ void MainWindow::impIClicked()
     Formula op2 = ((Imp*)f.get())->getOperand2();
 
     m_pretpostavke.push_back(op1);
-    qreal rect_width =  (selected->getText().length()*10 - 5)*3;
+    std::ostringstream stream;
+    op2->printFormula(stream);
+    qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
 
     int rect_x = selected->getx() + 25  + depth/2;
@@ -414,8 +441,10 @@ void MainWindow::impEClicked()
             if(yyparse() == 1){
         qDebug() << "Pa to ti ne radi";
     }
+    std::ostringstream stream1;
+    parsed_formula->printFormula(stream1);
+    qreal rect_width =  stream1.str().length()*PARAMETER;
 
-    qreal rect_width =  (selected->getText().length()*10 - 5)*3;
     qreal rect_height = 20;
 
     int rect_x = selected->getx() -20  - depth/2;
@@ -457,7 +486,11 @@ void MainWindow::notEClicked()
             if(yyparse() == 1){
         qDebug() << "Pa to ti ne radi";
     }
-    qreal rect_width =  (selected->getText().length()*10 - 5)*3;
+
+
+    std::ostringstream stream1;
+    parsed_formula->printFormula(stream1);
+    qreal rect_width =  stream1.str().length()*PARAMETER;
     qreal rect_height = 20;
 
     int rect_x = selected->getx() -20  - depth/2;
@@ -483,8 +516,9 @@ void MainWindow::notIClicked()
     m_pretpostavke.push_back(((Not*)selected->getFormula().get())->getOperand());
 
     Formula false_f = Formula(new False());
-
-    qreal rect_width =  (selected->getText().length()*10 - 5)*3;
+    std::ostringstream stream;
+    false_f->printFormula(stream);
+    qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
 
     int rect_x = selected->getx() -20  - depth/2;
@@ -505,7 +539,7 @@ void MainWindow::trueIClicked()
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
 
-    qreal rect_width =  (selected->getText().length()*10 - 5)*3;
+    qreal rect_width =  selected->getText().length()*PARAMETER;
     qreal rect_height = 20;
 
     int rect_x = selected->getx() -20  - depth/2;

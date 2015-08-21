@@ -21,7 +21,7 @@ public:
     qreal gety() const;
     const Formula &getFormula() const;
     QGraphicsItem* parentNode() const;
-    QVector<Formula>& getAssumptions(){ return m_assumptions; }
+    QVector<Formula>& getAssumptions(){ return m_assumptions;}
     bool checkAssumption() const;
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
