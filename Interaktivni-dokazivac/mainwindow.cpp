@@ -503,6 +503,8 @@ void MainWindow::notEClicked()
 
     rect_x = selected->getx() + 25  + depth/2;
     rect_y = selected->gety() - 20 - depth/2;
+    f2->printFormula(stream1);
+    rect_width = stream1.str().length()*PARAMETER;
     Node* item2 = new Node( f2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item2);
 

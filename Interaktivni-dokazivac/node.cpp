@@ -31,7 +31,10 @@ Node::Node(const Formula &formula, qreal width, qreal height, int x, int y, QGra
     m_assumptions = assumptions;
     if(checkAssumption()){
         rect_width = 35;
-        text = "Done";
+        text = "[";
+        text += QString::fromStdString(stream.str());
+        text += "]";
+        rect_width = text.length()*11;
     }
 }
 
