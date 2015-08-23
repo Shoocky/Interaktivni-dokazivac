@@ -203,7 +203,6 @@ void MainWindow::orI1Clicked()
     qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
     int rect_x = selected->getx();
-    int rect_x = selected->getx() + selected->getWidth()/3;
 
     int rect_y = selected->gety() - 20 - depth/2;
     QVector<Formula> assumptions = selected->getAssumptions();
@@ -226,7 +225,6 @@ void MainWindow::orI2Clicked()
     qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
     int rect_x = selected->getx() ;
-    int rect_x = selected->getx() + selected->getWidth()/3;
     int rect_y = selected->gety() - 20 - depth/2;
     QVector<Formula> assumptions = selected->getAssumptions();
     Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
