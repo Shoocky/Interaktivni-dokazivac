@@ -100,7 +100,6 @@ void MainWindow::buttonClicked()
         std::string formula = ui->lineEdit->text().toUtf8().constData();
         formula += " ;";
         std::ostringstream stream;
-        std::string tmp;
         qDebug() << QString::fromStdString(formula);
        YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
 
@@ -181,7 +180,7 @@ void MainWindow::andIClicked()
         scene->addNode(item);
 
         std::ostringstream stream1;
-         ((And*)(selected->getFormula().get()))->getOperand2()->printFormula(stream1);
+        ((And*)(selected->getFormula().get()))->getOperand2()->printFormula(stream1);
         rect_width =  stream1.str().length()*PARAMETER;
         rect_x = selected->getx() + 25  + depth/2;
         rect_y = selected->gety() - 20 - depth/2;
@@ -203,7 +202,7 @@ void MainWindow::orI1Clicked()
     ((Or*)(selected->getFormula().get()))->getOperand1()->printFormula(stream);
     qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
-    //int rect_x = selected->getx() - 20 - depth/2;
+    int rect_x = selected->getx();
     int rect_x = selected->getx() + selected->getWidth()/3;
 
     int rect_y = selected->gety() - 20 - depth/2;
@@ -226,7 +225,7 @@ void MainWindow::orI2Clicked()
     ((Or*)(selected->getFormula().get()))->getOperand2()->printFormula(stream);
     qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
-    //int rect_x = selected->getx() - 20 - depth/2;
+    int rect_x = selected->getx() ;
     int rect_x = selected->getx() + selected->getWidth()/3;
     int rect_y = selected->gety() - 20 - depth/2;
     QVector<Formula> assumptions = selected->getAssumptions();
@@ -242,8 +241,6 @@ void MainWindow::orEClicked()
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
-
-
 
     int rect_x;
     int rect_y;
@@ -286,8 +283,6 @@ void MainWindow::orEClicked()
 
     Formula op1 = ((Or*)parsed_formula.get())->getOperand1();
     Formula op2 = ((Or*)parsed_formula.get())->getOperand2();
-    m_pretpostavke.push_back(op1);
-    m_pretpostavke.push_back(op2);
 
     rect_x = selected->getx() + 25 + depth/2;
     rect_y = selected->gety() - 20 - depth/2;
@@ -295,13 +290,16 @@ void MainWindow::orEClicked()
     QVector<Formula> assumptions = selected->getAssumptions();
     assumptions.push_back(op1);
     assumptions.push_back(op2);
-
+    op1->printFormula(stream);
+    rect_width = stream.str().length()*PARAMETER;
     Node* item1 = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item1);
 
-
     rect_x = selected->getx() + 50 + depth/2;
     rect_y = selected->gety() - 20 - depth/2;
+
+    op2->printFormula(stream);
+    rect_width = stream.str().length()*PARAMETER;
     Node* item2 = new Node(selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item2);
 
@@ -310,8 +308,6 @@ void MainWindow::orEClicked()
 }
 
 void MainWindow::andE1Clicked(){
-
-
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
@@ -344,7 +340,7 @@ void MainWindow::andE1Clicked(){
     qreal rect_width =  tekst.length()*PARAMETER;
     qreal rect_height = 20;
 
-    int rect_x = selected->getx() + 25  + depth/2;
+    int rect_x = selected->getx();
     int rect_y = selected->gety() - 20 - depth/2;
     QVector<Formula> assumptions = selected->getAssumptions();
 
@@ -386,7 +382,7 @@ void MainWindow::andE2Clicked(){
     qreal rect_width =  tekst.length()*PARAMETER;
     qreal rect_height = 20;
 
-    int rect_x = selected->getx() + 25  + depth/2;
+    int rect_x = selected->getx();
     int rect_y = selected->gety() - 20 - depth/2;
     QVector<Formula> assumptions = selected->getAssumptions();
 
@@ -409,7 +405,7 @@ void MainWindow::impIClicked()
     qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
 
-    int rect_x = selected->getx() + 25  + depth/2;
+    int rect_x = selected->getx() ;
     int rect_y = selected->gety() - 20 - depth/2;
 
     QVector<Formula> assumptions = selected->getAssumptions();
@@ -458,7 +454,8 @@ void MainWindow::impEClicked()
     scene->addNode(item1);
 
     Formula f2 = Formula(new Imp(parsed_formula, f1));
-
+    f2->printFormula(stream1);
+    rect_width = stream1.str().length()*PARAMETER;
     rect_x = selected->getx() + 25  + depth/2;
     rect_y = selected->gety() - 20 - depth/2;
     Node* item2 = new Node( f2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
@@ -506,6 +503,8 @@ void MainWindow::notEClicked()
 
     rect_x = selected->getx() + 25  + depth/2;
     rect_y = selected->gety() - 20 - depth/2;
+    f2->printFormula(stream1);
+    rect_width = stream1.str().length()*PARAMETER;
     Node* item2 = new Node( f2, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item2);
 
@@ -516,14 +515,12 @@ void MainWindow::notIClicked()
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
-    m_pretpostavke.push_back(((Not*)selected->getFormula().get())->getOperand());
 
     Formula false_f = Formula(new False());
     std::ostringstream stream;
     false_f->printFormula(stream);
     qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
-
     int rect_x = selected->getx();
     int rect_y = selected->gety() - 20;
     QVector<Formula> assumptions = selected->getAssumptions();
@@ -534,19 +531,24 @@ void MainWindow::notIClicked()
 
 void MainWindow::falseEClicked()
 {
+    QList<QGraphicsItem *> selected_list = scene->selectedItems();
+    Node* selected = (Node*)(selected_list.at(0));
 
+    Formula false_f = Formula(new False());
+    std::ostringstream stream;
+    false_f->printFormula(stream);
+    qreal rect_width =  stream.str().length()*PARAMETER;
+    qreal rect_height = 20;
+    int rect_x = selected->getx();
+    int rect_y = selected->gety() - 20 - depth/2;
+    QVector<Formula> assumptions = selected->getAssumptions();
+    Node* item = new Node( false_f, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
+    scene->addNode(item);
 }
 
 void MainWindow::trueIClicked()
 {
-    QList<QGraphicsItem *> selected_list = scene->selectedItems();
-    Node* selected = (Node*)(selected_list.at(0));
 
-    qreal rect_width =  selected->getText().length()*PARAMETER;
-    qreal rect_height = 20;
-
-    int rect_x = selected->getx() -20  - depth/2;
-    int rect_y = selected->gety() - 20 - depth/2;
 
 }
 
@@ -572,7 +574,7 @@ void MainWindow::selectedItemChanged()
         ui->andE1->setDisabled(false);
         ui->andE2->setDisabled(false);
         ui->andI->setDisabled(false);
-
+        ui->trueI->setDisabled(true);
     }
     else if(selected->getFormula()->getType() == BaseFormula::T_OR){
         ui->andE1->setDisabled(false);
@@ -585,6 +587,7 @@ void MainWindow::selectedItemChanged()
         ui->orE->setDisabled(false);
         ui->orI1->setDisabled(false);
         ui->orI2->setDisabled(false);
+        ui->trueI->setDisabled(true);
     }
     else if(selected->getFormula()->getType() == BaseFormula::T_IMP){
         ui->andE1->setDisabled(false);
@@ -597,6 +600,7 @@ void MainWindow::selectedItemChanged()
         ui->notE->setDisabled(true);
         ui->impE->setDisabled(false);
         ui->impI->setDisabled(false);
+        ui->trueI->setDisabled(true);
     }
     else if(selected->getFormula()->getType() == BaseFormula::T_NOT){
 
@@ -610,6 +614,7 @@ void MainWindow::selectedItemChanged()
         ui->impI->setDisabled(true);
         ui->notE->setDisabled(true);
         ui->notI->setDisabled(false);
+        ui->trueI->setDisabled(true);
     }
     else if(selected->getFormula()->getType() == BaseFormula::T_FALSE){
 
@@ -623,6 +628,7 @@ void MainWindow::selectedItemChanged()
         ui->impI->setDisabled(true);
         ui->notI->setDisabled(true);
         ui->notE->setDisabled(false);
+        ui->trueI->setDisabled(true);
     }
     else if(selected->getFormula()->getType() == BaseFormula::T_ATOM){
 
@@ -636,6 +642,7 @@ void MainWindow::selectedItemChanged()
         ui->impI->setDisabled(true);
         ui->notI->setDisabled(true);
         ui->notE->setDisabled(true);
+        ui->trueI->setDisabled(true);
     }
     else if(selected->getFormula()->getType() == BaseFormula::T_TRUE){
 
@@ -649,6 +656,7 @@ void MainWindow::selectedItemChanged()
         ui->impI->setDisabled(true);
         ui->notI->setDisabled(true);
         ui->notE->setDisabled(true);
+        ui->falseE->setDisabled(true);
         ui->trueI->setDisabled(false);
     }
 }
