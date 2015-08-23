@@ -203,7 +203,9 @@ void MainWindow::orI1Clicked()
     ((Or*)(selected->getFormula().get()))->getOperand1()->printFormula(stream);
     qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
-    int rect_x = selected->getx() - 20 - depth/2;
+    //int rect_x = selected->getx() - 20 - depth/2;
+    int rect_x = selected->getx() + selected->getWidth()/3;
+
     int rect_y = selected->gety() - 20 - depth/2;
     QVector<Formula> assumptions = selected->getAssumptions();
 
@@ -224,7 +226,8 @@ void MainWindow::orI2Clicked()
     ((Or*)(selected->getFormula().get()))->getOperand2()->printFormula(stream);
     qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
-    int rect_x = selected->getx() - 20 - depth/2;
+    //int rect_x = selected->getx() - 20 - depth/2;
+    int rect_x = selected->getx() + selected->getWidth()/3;
     int rect_y = selected->gety() - 20 - depth/2;
     QVector<Formula> assumptions = selected->getAssumptions();
     Node* item = new Node(((Or*)(selected->getFormula().get()))->getOperand2(), rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
@@ -521,8 +524,8 @@ void MainWindow::notIClicked()
     qreal rect_width =  stream.str().length()*PARAMETER;
     qreal rect_height = 20;
 
-    int rect_x = selected->getx() -20  - depth/2;
-    int rect_y = selected->gety() - 20 - depth/2;
+    int rect_x = selected->getx();
+    int rect_y = selected->gety() - 20;
     QVector<Formula> assumptions = selected->getAssumptions();
     assumptions.push_back(((Not*)selected->getFormula().get())->getOperand());
     Node* item = new Node( false_f, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
@@ -557,6 +560,7 @@ void MainWindow::selectedItemChanged()
         return;
     }
     Node* selected = (Node*)(selected_list.at(0));
+    qDebug() <<  selected->getFormula()->formulaDepth();
     if(selected->getFormula()->getType() == BaseFormula::T_AND){
         ui->orI1->setDisabled(true);
         ui->orI2->setDisabled(true);

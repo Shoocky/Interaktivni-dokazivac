@@ -133,6 +133,7 @@ public:
   virtual Type getType() const = 0;
   virtual bool equalTo(const Formula & f) const = 0;
   virtual void getAtoms(std::vector<Formula> atoms) = 0;
+  virtual int formulaDepth() const = 0;
   virtual ~BaseFormula() {}
 };
 
@@ -152,6 +153,9 @@ public:
     }
     void getAtoms(std::vector<Formula> atoms){
         atoms.push_back(shared_from_this());
+    }
+    int formulaDepth() const{
+        return 1;
     }
 };
 
@@ -249,6 +253,9 @@ public:
   }
   void getAtoms(std::vector<Formula> atoms){
       atoms.push_back(shared_from_this());
+  }
+  int formulaDepth() const {
+    return 1;
   }
 };
 
@@ -356,6 +363,9 @@ public:
   void getAtoms(std::vector<Formula> atoms){
      _op->getAtoms(atoms);
   }
+  int formulaDepth() const {
+      return _op->formulaDepth() + 1;
+  }
 };
 
 
@@ -387,6 +397,14 @@ public:
   void getAtoms(std::vector<Formula> atoms){
      _op1->getAtoms(atoms);
      _op2->getAtoms(atoms);
+  }
+  int formulaDepth() const{
+      if(_op1->formulaDepth() > _op2->formulaDepth()){
+          return _op1->formulaDepth() + 1;
+      }
+      else{
+          return _op2->formulaDepth() + 1;
+      }
   }
 };
 
@@ -573,6 +591,9 @@ public:
   }
   void getAtoms(std::vector<Formula> atoms){
      _op->getAtoms(atoms);
+  }
+  int formulaDepth() const{
+      return 0;
   }
 };
 

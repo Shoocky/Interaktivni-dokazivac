@@ -20,6 +20,9 @@ Node::Node(const Formula & formula, qreal width, qreal height, const  int x, con
     pressed = false;
     m_parent = parent_node;
     this->setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemIsMovable);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+
 }
 
 Node::Node(const Formula &formula, qreal width, qreal height, int x, int y, QGraphicsItem *parent_node, QVector<Formula> assumptions)
@@ -30,8 +33,11 @@ Node::Node(const Formula &formula, qreal width, qreal height, int x, int y, QGra
     qDebug() << "Node added: " << QString::fromStdString(stream.str());
     m_assumptions = assumptions;
     if(checkAssumption()){
-        rect_width = 35;
-        text = "Done";
+           rect_width = 35;
+            text = "[";
+            text += QString::fromStdString(stream.str());
+            text += "]";
+            rect_width = text.length()*11;
     }
 }
 
@@ -72,14 +78,17 @@ QString Node::getText() const
 {
     return text;
 }
+qreal Node::getWidth() const{
+    return rect_width;
+}
 
 qreal Node::getx() const
 {
-    return rect_x;
+    return sceneBoundingRect().x();
 }
 qreal Node::gety() const
 {
-    return rect_y;
+    return sceneBoundingRect().y();
 }
 
 const Formula& Node::getFormula() const
@@ -112,6 +121,17 @@ void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
             update();
         }
         */
+}
+
+QVariant Node::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+{
+    if(change == ItemPositionChange){
+        qDebug() << "item changed";
+
+        return QPointF(value.toPointF().x(), pos().y());
+    }
+    return QGraphicsItem::itemChange(change,value);
+
 }
 
 

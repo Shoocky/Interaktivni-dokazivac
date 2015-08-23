@@ -19,12 +19,14 @@ public:
     QString getText() const;
     qreal getx() const;
     qreal gety() const;
+    qreal getWidth() const;
     const Formula &getFormula() const;
     QGraphicsItem* parentNode() const;
     QVector<Formula>& getAssumptions(){ return m_assumptions;}
     bool checkAssumption() const;
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 private:
     QGraphicsItem * m_parent;
     Formula m_formula;
