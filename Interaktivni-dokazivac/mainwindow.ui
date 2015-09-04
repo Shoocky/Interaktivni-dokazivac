@@ -29,12 +29,6 @@
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
-    <property name="baseSize">
-     <size>
-      <width>2</width>
-      <height>5</height>
-     </size>
-    </property>
     <property name="text">
      <string>primeni</string>
     </property>

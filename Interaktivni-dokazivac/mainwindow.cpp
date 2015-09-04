@@ -36,12 +36,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QHBoxLayout * input_layout = new QHBoxLayout;
     input_layout->addWidget(ui->lineEdit);
-    ui->dodajDete->setFixedSize(50,30);
+    ui->dodajDete->setFixedSize(70,30);
     input_layout->addWidget(ui->dodajDete);
 
     QVBoxLayout * btn_layout = new QVBoxLayout;
-    //btn_layout->addWidget(ui->lineEdit);
-    //btn_layout->addWidget(ui->dodajDete);
     btn_layout->addWidget(ui->andI);
     btn_layout->addWidget(ui->andE1);
     btn_layout->addWidget(ui->andE2);
@@ -95,6 +93,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::buttonClicked()
 {
+
     if(depth == 0 ){
         qDebug() << "lalalalalla";
         std::string formula = ui->lineEdit->text().toUtf8().constData();
@@ -107,15 +106,7 @@ void MainWindow::buttonClicked()
             qDebug() << "Pa to ti ne radi";
         }
 
-/*
-        if(parsed_formula.get() != 0){
-               ((Or*)parsed_formula.get())->getOperand2()->printFormula(stream);
-                qDebug() << "ovo je nesto: " << QString::fromStdString(stream.str());
-        }
-        else {
-            qDebug() << " pa dobro";
-        }
-*/       qreal rect_width = formula.length()*PARAMETER;
+        qreal rect_width = formula.length()*PARAMETER;
         qreal rect_height = 20;
         int rect_x = 85;
         int rect_y = 180;
@@ -124,26 +115,8 @@ void MainWindow::buttonClicked()
         QVector<Formula> assumptions = QVector<Formula>::fromStdVector(tmp_vec);
         Node* item = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, nullptr, assumptions);
         scene->addNode(item);
-    }
-    else{
+   }
 
-        QList<QGraphicsItem *> selected_list = scene->selectedItems();
-
-        Node* selected = (Node*)(selected_list.at(0));
-        qreal rect_width =  selected->getText().length()*PARAMETER;
-        qreal rect_height = 20;
-        int rect_x = selected->getx() - 20 - depth/2;
-        int rect_y = selected->gety() - 20 - depth/2;
-
-        Node* item = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected);
-        scene->addNode(item);
-
-        rect_x = selected->getx() + 25  + depth/2;
-        rect_y = selected->gety() - 20 - depth/2;
-        Node* item1 = new Node( selected->getFormula(), rect_width, rect_height, rect_x, rect_y, selected);
-        scene->addNode(item1);
-
-    }
     depth += 15;
 }
 
@@ -276,7 +249,10 @@ void MainWindow::orEClicked()
     rect_x = selected->getx() - 20 - depth/2;
     rect_y = selected->gety() - 20 - depth/2;
 
-    Node* item3 = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0));
+    QVector<Formula> assumptions = selected->getAssumptions();
+    assumptions.push_back(parsed_formula);
+
+    Node* item3 = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, selected_list.at(0), assumptions);
     scene->addNode(item3);
 
     Formula op1 = ((Or*)parsed_formula.get())->getOperand1();
@@ -285,7 +261,7 @@ void MainWindow::orEClicked()
     rect_x = selected->getx() + 25 + depth/2;
     rect_y = selected->gety() - 20 - depth/2;
 
-    QVector<Formula> assumptions = selected->getAssumptions();
+
     assumptions.push_back(op1);
     assumptions.push_back(op2);
     op1->printFormula(stream);
