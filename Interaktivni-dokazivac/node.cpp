@@ -110,18 +110,6 @@ bool Node::checkAssumption() const
     }
     return false;
 }
-void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    /*
-    if (event->button() == Qt::MouseButton::LeftButton) {
-            qDebug() << "node: mouse press";
-            bool selected = isSelected();
-            setSelected(!selected);
-            isSelected() ? qDebug() << "selektovan je" : qDebug() << "nije selektovan";
-            update();
-        }
-        */
-}
 
 QVariant Node::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {

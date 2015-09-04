@@ -93,7 +93,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::buttonClicked()
 {
-
+    ui->dodajDete->setDisabled(true);
     if(depth == 0 ){
         qDebug() << "lalalalalla";
         std::string formula = ui->lineEdit->text().toUtf8().constData();
@@ -373,7 +373,7 @@ void MainWindow::impIClicked()
     Formula op1 = ((Imp*)f.get())->getOperand1();
     Formula op2 = ((Imp*)f.get())->getOperand2();
 
-    m_pretpostavke.push_back(op1);
+
     std::ostringstream stream;
     op2->printFormula(stream);
     qreal rect_width =  stream.str().length()*PARAMETER;

@@ -25,7 +25,6 @@ public:
     QVector<Formula>& getAssumptions(){ return m_assumptions;}
     bool checkAssumption() const;
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 private:
     QGraphicsItem * m_parent;

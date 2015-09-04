@@ -42,7 +42,6 @@ private:
     TreeScene *scene;
     int depth;
     std::vector<QGraphicsItem *> items;
-    std::vector<Formula> m_pretpostavke;
 };
 
 #endif // MAINWINDOW_H
