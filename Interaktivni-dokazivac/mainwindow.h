@@ -31,6 +31,7 @@ private slots:
     void falseEClicked();
     void trueIClicked();
     void selectedItemChanged();
+    void chooseFileClicked();
 
 public:
     explicit MainWindow(QWidget *parent = 0);

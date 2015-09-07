@@ -5,6 +5,8 @@
 #include <ostream>
 #include <string>
 
+#define OFFSET 30
+
 Node::Node(const Formula & formula, qreal width, qreal height, const  int x, const int y, QGraphicsItem *parent_node)
 {
     std::ostringstream stream;
@@ -13,12 +15,13 @@ Node::Node(const Formula & formula, qreal width, qreal height, const  int x, con
     m_formula = formula;
     text = QString::fromStdString(stream.str());
     qDebug() << "Node(): " + text;
-    rect_width = width;
-    rect_height = height;
+    rect_width = width + OFFSET * 2;
+    rect_height = height + 10;
     rect_x = x;
     rect_y = y;
     pressed = false;
     m_parent = parent_node;
+    m_rule = "";
     this->setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
@@ -54,20 +57,27 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         QRectF rect = boundingRect();
         QPen pen(Qt::red, 1);
         painter->setPen(pen);
-        if(text != "Done")
-            painter->drawLine(rect.topLeft(),rect.topRight());
+
         //painter->drawRect(rect);
-        painter->drawText(rect, Qt::AlignCenter, text);
+        painter->drawText(rect, Qt::AlignBottom | Qt::AlignCenter , text);
+        painter->drawText(rect, Qt::AlignTop | Qt::AlignRight, m_rule);
+        if(text != "Done")
+            painter->drawLine(rect.left() + OFFSET, rect.center().y() -7, rect.right() - OFFSET, rect.center().y() -7);
+
     }
     else{
         QRectF rect = boundingRect();
         QPen pen(Qt::black, 1);
         painter->setPen(pen);
-        if(text != "Done")
-            painter->drawLine(rect.topLeft(),rect.topRight());
+
+
         //painter->drawRect(rect);
-        painter->drawText(rect, Qt::AlignCenter, text);
+        painter->drawText(rect, Qt::AlignBottom | Qt::AlignCenter, text);
+         painter->drawText(rect, Qt::AlignTop | Qt::AlignRight, m_rule);
+         if(text != "Done")
+             painter->drawLine(rect.left() + OFFSET,rect.center().y() -7, rect.right() - OFFSET, rect.center().y() -7);
     }
+
     if(isSelected()){
 
         qDebug() << "Selektovan";
@@ -109,6 +119,11 @@ bool Node::checkAssumption() const
         }
     }
     return false;
+}
+
+void Node::setRule(QString rule)
+{
+    m_rule = rule;
 }
 
 QVariant Node::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)

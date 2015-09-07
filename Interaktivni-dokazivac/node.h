@@ -24,6 +24,7 @@ public:
     QGraphicsItem* parentNode() const;
     QVector<Formula>& getAssumptions(){ return m_assumptions;}
     bool checkAssumption() const;
+    void setRule(QString rule);
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 private:
@@ -31,6 +32,7 @@ private:
     Formula m_formula;
     QVector<Formula> m_assumptions;
     QString text;
+    QString m_rule;
     qreal rect_width;
     qreal rect_height;
     int rect_x;

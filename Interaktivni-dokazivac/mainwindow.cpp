@@ -12,8 +12,12 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QDir>
+#include <QPushButton>
+#include <QFileDialog>
+#include <QDir>
+#include <QErrorMessage>
 
-#define PARAMETER 11
+#define PARAMETER 14
 
 typedef struct yy_buffer_state * YY_BUFFER_STATE;
 extern int yyparse();
@@ -38,6 +42,13 @@ MainWindow::MainWindow(QWidget *parent) :
     input_layout->addWidget(ui->lineEdit);
     ui->dodajDete->setFixedSize(70,30);
     input_layout->addWidget(ui->dodajDete);
+    QPushButton* choose_file = new QPushButton;
+    choose_file->setText("choose file");
+    choose_file->setFixedSize(80,30);
+    input_layout->addWidget(choose_file);
+
+    QObject::connect(choose_file, SIGNAL(clicked(bool)), this, SLOT(chooseFileClicked()));
+    QObject::connect(choose_file, SIGNAL(clicked(bool)), choose_file, SLOT(setDisabled(bool)));
 
     QVBoxLayout * btn_layout = new QVBoxLayout;
     btn_layout->addWidget(ui->andI);
@@ -94,6 +105,7 @@ MainWindow::~MainWindow()
 void MainWindow::buttonClicked()
 {
     ui->dodajDete->setDisabled(true);
+    ui->lineEdit->setDisabled(true);
     if(depth == 0 ){
         qDebug() << "lalalalalla";
         std::string formula = ui->lineEdit->text().toUtf8().constData();
@@ -138,7 +150,8 @@ void MainWindow::andIClicked()
 
         QList<QGraphicsItem *> selected_list = scene->selectedItems();
         Node* selected = (Node*)(selected_list.at(0));    
-
+        selected->setRule("andI");
+        selected->update();
         std::ostringstream stream;
         ((And*)(selected->getFormula().get()))->getOperand1()->printFormula(stream);
         qreal rect_width =  stream.str().length()*PARAMETER;
@@ -170,7 +183,8 @@ void MainWindow::orI1Clicked()
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
-
+    selected->setRule("orI1");
+    selected->update();
     std::ostringstream stream;
     ((Or*)(selected->getFormula().get()))->getOperand1()->printFormula(stream);
     qreal rect_width =  stream.str().length()*PARAMETER;
@@ -193,6 +207,9 @@ void MainWindow::orI2Clicked()
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
 
+    selected->setRule("orI2");
+    selected->update();
+
     std::ostringstream stream;
     ((Or*)(selected->getFormula().get()))->getOperand2()->printFormula(stream);
     qreal rect_width =  stream.str().length()*PARAMETER;
@@ -212,7 +229,8 @@ void MainWindow::orEClicked()
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
-
+    selected->setRule("orE");
+    selected->update();
     int rect_x;
     int rect_y;
 
@@ -285,7 +303,8 @@ void MainWindow::andE1Clicked(){
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
-
+    selected->setRule("andE1");
+    selected->update();
     Formula f1 = selected->getFormula();
 
     bool ok;
@@ -328,7 +347,8 @@ void MainWindow::andE2Clicked(){
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
-
+    selected->setRule("andE2");
+    selected->update();
     Formula f1 = selected->getFormula();
     bool ok;
     QString tekst = QInputDialog::getText(this, tr("QInputDialog::getText()"),
@@ -369,6 +389,10 @@ void MainWindow::impIClicked()
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
+
+    selected->setRule("impI");
+    selected->update();
+
     Formula f = selected->getFormula();
     Formula op1 = ((Imp*)f.get())->getOperand1();
     Formula op2 = ((Imp*)f.get())->getOperand2();
@@ -394,6 +418,9 @@ void MainWindow::impEClicked()
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
+
+    selected->setRule("impE");
+    selected->update();
 
     Formula f1 = selected->getFormula();
     bool ok;
@@ -442,6 +469,10 @@ void MainWindow::notEClicked()
 
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
+
+    selected->setRule("notE");
+    selected->update();
+
     bool ok;
     QString tekst = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                              tr("Unesite formulu:"), QLineEdit::Normal,
@@ -490,6 +521,9 @@ void MainWindow::notIClicked()
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
 
+    selected->setRule("notI");
+    selected->update();
+
     Formula false_f = Formula(new False());
     std::ostringstream stream;
     false_f->printFormula(stream);
@@ -507,6 +541,9 @@ void MainWindow::falseEClicked()
 {
     QList<QGraphicsItem *> selected_list = scene->selectedItems();
     Node* selected = (Node*)(selected_list.at(0));
+
+    selected->setRule("false");
+    selected->update();
 
     Formula false_f = Formula(new False());
     std::ostringstream stream;
@@ -536,6 +573,8 @@ void MainWindow::selectedItemChanged()
         return;
     }
     Node* selected = (Node*)(selected_list.at(0));
+
+
     qDebug() <<  selected->getFormula()->formulaDepth();
     if(selected->getFormula()->getType() == BaseFormula::T_AND){
         ui->orI1->setDisabled(true);
@@ -633,4 +672,50 @@ void MainWindow::selectedItemChanged()
         ui->falseE->setDisabled(true);
         ui->trueI->setDisabled(false);
     }
+}
+
+void MainWindow::chooseFileClicked()
+{
+    ui->dodajDete->setDisabled(true);
+    ui->lineEdit->setDisabled(true);
+
+    std::ostringstream stream;
+    if(depth == 0 ){
+        qDebug() << "lalalalalla";
+        //std::string formula = ui->lineEdit->text().toUtf8().constData();
+        QString file_name = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::currentPath(), tr("*.for"));
+        qDebug() << file_name;
+        QFile f(file_name);
+            if (!f.open(QFile::ReadOnly | QFile::Text)){
+                QMessageBox msgBox;
+                 msgBox.setWindowTitle("Error!");
+                 msgBox.setText("Can`t open file");
+                 msgBox.setDetailedText("Unable to open file for reading");
+                 msgBox.exec();
+            }
+            QTextStream in(&f);
+            stream << in.readAll().toUtf8().constData();
+
+
+
+        std::string formula = stream.str();
+        formula += " ;";
+        qDebug() << QString::fromStdString(formula);
+       YY_BUFFER_STATE buffer = yy_scan_string(formula.c_str());
+
+                if(yyparse() == 1){
+            qDebug() << "Pa to ti ne radi";
+        }
+
+        qreal rect_width = formula.length()*PARAMETER;
+        qreal rect_height = 20;
+        int rect_x = 85;
+        int rect_y = 180;
+        std::vector<Formula> tmp_vec = std::vector<Formula>();
+        parsed_formula->getAtoms(tmp_vec);
+        QVector<Formula> assumptions = QVector<Formula>::fromStdVector(tmp_vec);
+        Node* item = new Node( parsed_formula, rect_width, rect_height, rect_x, rect_y, nullptr, assumptions);
+        scene->addNode(item);
+   }
+
 }
