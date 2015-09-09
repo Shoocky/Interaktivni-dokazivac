@@ -30,7 +30,7 @@
      </sizepolicy>
     </property>
     <property name="text">
-     <string>primeni</string>
+     <string>Primeni</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit">
@@ -165,7 +165,7 @@
      </sizepolicy>
     </property>
     <property name="text">
-     <string>ponisti</string>
+     <string>Poništi</string>
     </property>
    </widget>
    <widget class="QPushButton" name="orI2">

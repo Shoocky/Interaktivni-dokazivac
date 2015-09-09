@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->dodajDete->setFixedSize(70,30);
     input_layout->addWidget(ui->dodajDete);
     QPushButton* choose_file = new QPushButton;
-    choose_file->setText("choose file");
+    choose_file->setText("Učitaj");
     choose_file->setFixedSize(80,30);
     input_layout->addWidget(choose_file);
 
@@ -93,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent) :
     widget->setLayout(main_layout);
 
     setCentralWidget(widget);
-    setWindowTitle("nase drvce");
+    setWindowTitle("Interaktivni dokazivač u prirodnoj dedukciji");
 
 }
 
@@ -107,7 +107,6 @@ void MainWindow::buttonClicked()
     ui->dodajDete->setDisabled(true);
     ui->lineEdit->setDisabled(true);
     if(depth == 0 ){
-        qDebug() << "lalalalalla";
         std::string formula = ui->lineEdit->text().toUtf8().constData();
         formula += " ;";
         std::ostringstream stream;
@@ -681,9 +680,7 @@ void MainWindow::chooseFileClicked()
 
     std::ostringstream stream;
     if(depth == 0 ){
-        qDebug() << "lalalalalla";
-        //std::string formula = ui->lineEdit->text().toUtf8().constData();
-        QString file_name = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::currentPath(), tr("*.for"));
+        QString file_name = QFileDialog::getOpenFileName(this, tr("Učitaj iz fajla"), QDir::currentPath(), tr("*.for"));
         qDebug() << file_name;
         QFile f(file_name);
             if (!f.open(QFile::ReadOnly | QFile::Text)){
