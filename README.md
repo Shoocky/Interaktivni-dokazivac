@@ -2,7 +2,7 @@
 Interkativni dokazivac u prirodnoj dedukciji (Qt)
 
 Ovaj interaktivni dokazivač zasniva se na prirodnoj dedukciji. U prirodnoj dedukciji koriste se logički veznici:
-¬, ∧, ∨, ⇒, kao i logička konstanta ⊥. Za svaki logički veznik i svaki kvantifikator postoje pravila koja ga uvode (pravila I-tipa) i pravila koja ga eliminišu (pravila E-tipa). Postoji sistem prirodne dedukcije za klasičnu logiku i sistem prirodne dedukcije za intuicionističku logiku. U sistemu prirodne dedukcije za klasičnu logiku postoji jedna aksiomska shema: A ∨ ¬A. Sistem za intuicionističku logiku nema aksioma. Ovo je verzija dokazivača u sistemu intuicionističke logike.
+¬, ∧, ∨, ⇒, kao i logička konstanta ⊥. Za svaki logički veznik postoje pravila koja ga uvode (pravila I-tipa) i pravila koja ga eliminišu (pravila E-tipa). Postoji sistem prirodne dedukcije za klasičnu logiku i sistem prirodne dedukcije za intuicionističku logiku. U sistemu prirodne dedukcije za klasičnu logiku postoji jedna aksiomska shema: A ∨ ¬A. Sistem za intuicionističku logiku nema aksioma. Ovo je verzija dokazivača u sistemu intuicionističke logike.
 Dokaz (dedukcija, izvod) je stablo čijem je svakom čvoru pridružena formula, a svakom listu je pridružena pretpostavka. Dokaz se prikazuje u vidu stabla čiji su listovi na vrhu, a koren na dnu.
 
 Uputstvo za korišćenje:
